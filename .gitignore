@@ -1,0 +1,7 @@
+__pycache__
+.ipynb_checkpoints
+venv/*
+modules/__pycache__
+utils/__pycache__
+app.log
+data/production
