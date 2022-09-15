@@ -11,25 +11,3 @@
 # SIGUIENTES PASOS
 1. Investigar optimización de portfolios con paquetes como PyFolio
 2. Investigar si podemos añadir los impuestos de hacienda sobre ganancias en la optimización
-
-
-# Pending tasks:
-
-1. Write new code to be able to handle more intervals in extraction code
-2. Add arguments when calling to the script to edit them from bash instead of doing it from the script.
-3. Check why some logs are duplicated
-
-
-# Crontab
-
-The sleep command is used in order to avoid the script being executed before the data is uploaded. This happens rarely, but it is a case that must be handled.
-
-    * * * * * sleep 10 && cd /path/to/script/ && bash run.sh # Every minute
-    */30 * * * * sleep 10 && cd /path/to/script/ && bash run.sh # Every 30 minutes
-    
-# Biblio
-
-## 1D denoising
-   - https://www.sciencedirect.com/topics/computer-science/signal-denoising
-   - https://pypi.org/project/noisereduce/
-   - https://towardsdatascience.com/noise-cancellation-with-python-and-fourier-transform-97303314aa71
