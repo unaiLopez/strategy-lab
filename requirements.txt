@@ -1,0 +1,8 @@
+vectorbt==0.24.0
+pandas==1.4.3
+numpy==1.23.3
+statsmodels==0.13.2
+matplotlib==3.1
+genopt==0.9.14
+yfinance==0.1.74
+numba==0.56.2
