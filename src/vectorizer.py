@@ -7,10 +7,10 @@ import logging
 
 from typing import List, Callable
 from genopt.environment import Environment
+from genopt.parameters import Parameters
 
-def custom_indicator(close: pd.DataFrame, interval: str, velocity_up: float, velocity_down: float,
+def custom_indicator(close_interval: pd.DataFrame, velocity_up: float, velocity_down: float,
                      acceleration_up: float, acceleration_down: float) -> np.array:
-    close_interval = close.resample(interval).last()
     # loess denoising---------
     lowess = sm.nonparametric.lowess
     y = close_interval.to_numpy().flatten()
@@ -40,40 +40,16 @@ def custom_indicator(close: pd.DataFrame, interval: str, velocity_up: float, vel
     first_derivative = first_derivative / np.max(first_derivative)
     second_derivative = second_derivative / np.max(second_derivative)
     #----------------------------------
-    
-    #df generation and aligning for resample----------
-    df_first_derivative = pd.DataFrame(first_derivative, columns=close.columns, index=close_interval.index)
-    df_second_derivative = pd.DataFrame(second_derivative, columns=close.columns, index=close_interval.index)
-    
-    df_first_derivative, _ = df_first_derivative.align(
-        close,
-        broadcast_axis=0,
-        method='ffill',
-        join='right'
-    )
-    df_second_derivative, _ = df_second_derivative.align(
-        close,
-        broadcast_axis=0,
-        method='ffill',
-        join='right'
-    )
-    #-----------------------
 
     #-----signal conditions----
-    first_derivative = df_first_derivative.to_numpy()
-    second_derivative = df_second_derivative.to_numpy()
-    buy_condition = (
-                    (
-                        ((first_derivative > velocity_down) & (first_derivative < velocity_up)) &
-                        (second_derivative >= acceleration_up)
-                    )
-                )
-    sell_condition = (
-        (
-            ((first_derivative > velocity_down) & (first_derivative < velocity_up)) &
-            (second_derivative <= acceleration_down)
-        )
-    )
+    buy_condition = ((
+        ((first_derivative > velocity_down) & (first_derivative < velocity_up)) &
+         (second_derivative >= acceleration_up)
+    ))
+    sell_condition = ((
+        ((first_derivative > velocity_down) & (first_derivative < velocity_up)) &
+         (second_derivative <= acceleration_down)
+    ))
 
     signals = np.where(buy_condition, 1, 0)
     signals = np.where(sell_condition, -1, signals)
@@ -95,17 +71,16 @@ def get_ticker_prices(ticker: List[str], days: int, interval: str) -> pd.DataFra
 
     return ticker_price
 
-def apply_strategy(ticker_price: pd.DataFrame, interval: str, velocity_up: float, velocity_down: float,
+def apply_strategy(close_interval: pd.DataFrame, velocity_up: float, velocity_down: float,
                    acceleration_up: float, acceleration_down: float, take_profit: float, stop_loss: float, fee_rate=0.001) -> float:
     indicator = vbt.IndicatorFactory(
         class_name='first_and_second_order_derivatives',
         short_name='derivatives',
         input_names=['close'],
-        param_names=['interval', 'velocity_up', 'velocity_down', 'acceleration_up', 'acceleration_down'],
+        param_names=['velocity_up', 'velocity_down', 'acceleration_up', 'acceleration_down'],
         output_names=['signals']
     ).from_apply_func(
         custom_indicator,
-        interval=interval,
         velocity_up=velocity_up,
         velocity_down=velocity_down,
         acceleration_up=acceleration_up,
@@ -114,14 +89,14 @@ def apply_strategy(ticker_price: pd.DataFrame, interval: str, velocity_up: float
     )
 
     res = indicator.run(
-        ticker_price
+        close_interval
     )
 
     entries = res.signals == 1.0
     exits = res.signals == -1.0
 
     pf = vbt.Portfolio.from_signals(
-        ticker_price,
+        close_interval,
         entries,
         exits,
         sl_stop=stop_loss,
@@ -133,13 +108,13 @@ def apply_strategy(ticker_price: pd.DataFrame, interval: str, velocity_up: float
 
 def define_search_space() -> dict:
     params = {
-        'interval': ['1h', '2h', '4h', '6h', '12h'],
-        'take_profit': np.arange(0.01, 0.12, step=0.05, dtype=float),
-        'stop_loss': np.arange(0.05, 0.1, step=0.05, dtype=float),
-        'velocity_up': np.arange(0.005, 1.0, step=0.005, dtype=float),
-        'velocity_down': np.arange(-0.005, -1.0, step=-0.005, dtype=float),
-        'acceleration_up': np.arange(0.005, 1.0, step=0.005, dtype=float),
-        'acceleration_down': np.arange(-0.005, -1.0, step=-0.005, dtype=float)
+        'interval': Parameters.suggest_categorical(['1h', '2h', '4h', '6h', '12h']),
+        'take_profit': Parameters.suggest_float(0.01, 0.12),
+        'stop_loss': Parameters.suggest_float(0.05, 0.1),
+        'velocity_up': Parameters.suggest_float(0.005, 1.0),
+        'velocity_down': Parameters.suggest_float(-0.005, -1.0),
+        'acceleration_up': Parameters.suggest_float(0.005, 1.0),
+        'acceleration_down': Parameters.suggest_float(-0.005, -1.0)
     }
 
     return params
@@ -152,10 +127,11 @@ def objective(individual: dict) -> float:
     velocity_down = individual['velocity_down']
     acceleration_up = individual['acceleration_up']
     acceleration_down = individual['acceleration_down']
+
+    close_interval = ticker_price.resample(interval).last()
     
     returns = apply_strategy(
-        ticker_price,
-        interval,
+        close_interval,
         velocity_up,
         velocity_down,
         acceleration_up,
@@ -192,19 +168,18 @@ def optimize(params: dict, objective: Callable[[dict], float], timeout: int, n_j
 
 if __name__ == '__main__':
     logger = logging.getLogger()
-    logger.setLevel(level=logging.ERROR)
+    logger.setLevel(level=logging.INFO)
 
-    ticker_price = get_ticker_prices(['BTC-USD'], 10, '1h')
-    print('DATA READ...')
+    ticker_price = get_ticker_prices(ticker=['BTC-USD'], days=120, interval='1h')
     
     params = define_search_space()
     results = optimize(
         params=params,
         objective=objective,
-        timeout=30,
+        timeout=3600,
         n_jobs=1,
-        num_generations=99999,
-        num_population=1000,
+        num_generations=9999999,
+        num_population=200,
         direction='maximize'
     )
 
