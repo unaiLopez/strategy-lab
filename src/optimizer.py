@@ -1,25 +1,9 @@
-import vectorbt as vbt
 import pandas as pd
-import datetime
 import optuna
 import logging
 
-from typing import List
 from strategy import apply_strategy
-
-def get_ticker_prices(ticker: List[str], days: int, interval: str) -> pd.DataFrame:
-    end = datetime.datetime.now()
-    start = end - datetime.timedelta(days=days)
-
-    ticker_price = vbt.YFData.download(
-        ticker,
-        missing_index='drop',
-        start=start,
-        end=end,
-        interval=interval
-    ).get('Close')
-
-    return ticker_price
+from utils import train_test_split
 
 def objective(trial, close):
     interval = trial.suggest_categorical('interval', ['5m', '15m', '30m', '1h', '2h', '4h', '6h', '12h'])
@@ -51,12 +35,12 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     logger.setLevel(level=logging.INFO)
 
-    #ticker_price = get_ticker_prices(ticker=['BTC-USD'], days=120, interval='1h')
     ticker_price = pd.read_csv('../data/validation/BTCEUR_1_MIN_INTERVAL.csv')
     index = pd.DatetimeIndex(ticker_price.Time.values)
     ticker_price = pd.Series(data=ticker_price.BTCEUR.values, index=index)
+    ticker_price_train, _ = train_test_split(data=ticker_price, test_months=6)
 
-    func = lambda trial: objective(trial, ticker_price)
+    func = lambda trial: objective(trial, ticker_price_train)
     study = optuna.create_study(direction='maximize')
     study.optimize(func, timeout=720, n_jobs=-1)
 

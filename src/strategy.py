@@ -31,9 +31,9 @@ def custom_indicator(close_interval: pd.DataFrame, lowess_fraction: int, velocit
     # derivation calculation----------
     first_derivative = np.gradient(denoised_ys)
     second_derivative = np.gradient(first_derivative)
-    
-    first_derivative = first_derivative / np.max(first_derivative)
-    second_derivative = second_derivative / np.max(second_derivative)
+
+    first_derivative = (((first_derivative - np.min(first_derivative)) / (np.max(first_derivative) - np.min(first_derivative))) * 2) - 1
+    second_derivative = (((second_derivative - np.min(second_derivative)) / (np.max(second_derivative) - np.min(second_derivative))) * 2) - 1
     #----------------------------------
 
     #-----signal conditions----
