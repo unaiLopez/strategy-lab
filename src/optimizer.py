@@ -1,64 +1,70 @@
-import warnings
-warnings.filterwarnings('ignore')
+import vectorbt as vbt
+import pandas as pd
+import datetime
+import optuna
+import logging
 
-from genopt.environment import Environment
-from genopt.parameters import Parameters
-from strategy import Strategy
+from typing import List
+from strategy import apply_strategy
 
-class StrategyOptimizer:
-    def __init__(self, ticker: str, months_validation: int):
-        self.ticker = ticker
-        self.months_validation = months_validation
-        self.strategy = Strategy()
+def get_ticker_prices(ticker: List[str], days: int, interval: str) -> pd.DataFrame:
+    end = datetime.datetime.now()
+    start = end - datetime.timedelta(days=days)
 
-    def _define_search_space(self) -> dict:
-        params = {
-            'interval': Parameters.suggest_categorical(['5M', '15M', '30M', '1H', '2H', '4H', '6H', '12H']),
-            'take_profit': Parameters.suggest_float(0.005, 0.1),
-            'stop_loss': Parameters.suggest_float(0.005, 0.1),
-            'velocity_up': Parameters.suggest_float(0.01,1.0),
-            'velocity_down': Parameters.suggest_float(-0.01,-1.0),
-            'acceleration_up': Parameters.suggest_float(0.01,1.0),
-            'acceleration_down': Parameters.suggest_float(-0.01,-1.0)
-        }
+    ticker_price = vbt.YFData.download(
+        ticker,
+        missing_index='drop',
+        start=start,
+        end=end,
+        interval=interval
+    ).get('Close')
 
-        return params
+    return ticker_price
+
+def objective(trial, close):
+    interval = trial.suggest_categorical('interval', ['5m', '15m', '30m', '1h', '2h', '4h', '6h', '12h'])
+    lowess_fraction = trial.suggest_int('lowess_fraction', 20, 60, step=5)
+    take_profit = trial.suggest_float('take_profit', 0.01, 0.12, step=0.005)
+    stop_loss = trial.suggest_float('stop_loss', 0.05, 0.1, step=0.005)
+    velocity_up = trial.suggest_float('velocity_up', 0.05, 1.0, step=0.05)
+    velocity_down = trial.suggest_float('velocity_down', -1.0, -0.05, step=0.05)
+    acceleration_up = trial.suggest_float('acceleration_up', 0.05, 1.0, step=0.05)
+    acceleration_down = trial.suggest_float('acceleration_down', -1.0, -0.05, step=0.05)
+
+    close_interval = close.resample(interval).last()
+    close_interval.dropna(axis=0, inplace=True)
     
-    def objective(self, individual: dict) -> float:
-        interval = individual['interval']
-        take_profit = individual['take_profit']
-        stop_loss = individual['stop_loss']
-        velocity_up = individual['velocity_up']
-        velocity_down = individual['velocity_down']
-        acceleration_up = individual['acceleration_up']
-        acceleration_down = individual['acceleration_down']
-        
-        mean_rois = self.strategy.apply_strategy(self.ticker, interval, take_profit, stop_loss, self.months_validation,
-                                    velocity_up, velocity_down, acceleration_up, acceleration_down)
-        
-        return mean_rois
-
-    def optimize(self, timeout: int, n_jobs: int, num_generations: int, num_population: int) -> dict:
-        params = self._define_search_space()
-        environment = Environment(
-            params=params,
-            num_population=num_population,
-            selection_type='ranking',
-            selection_rate=0.8,
-            crossover_type='two-point',
-            mutation_type='single-gene',
-            prob_mutation=0.25,
-            verbose=1,
-            random_state=42
-        )
-
-        results = environment.optimize(
-            objective=self.objective,
-            direction='maximize',
-            num_generations=num_generations,
-            timeout=timeout,
-            n_jobs=n_jobs
-        )
-
-        return results.best_individual
+    portfolio = apply_strategy(
+        close_interval,
+        lowess_fraction,
+        velocity_up,
+        velocity_down,
+        acceleration_up,
+        acceleration_down,
+        take_profit,
+        stop_loss
+    )
     
+    return portfolio.total_return()
+
+if __name__ == '__main__':
+    logger = logging.getLogger()
+    logger.setLevel(level=logging.INFO)
+
+    #ticker_price = get_ticker_prices(ticker=['BTC-USD'], days=120, interval='1h')
+    ticker_price = pd.read_csv('../data/validation/BTCEUR_1_MIN_INTERVAL.csv')
+    index = pd.DatetimeIndex(ticker_price.Time.values)
+    ticker_price = pd.Series(data=ticker_price.BTCEUR.values, index=index)
+
+    func = lambda trial: objective(trial, ticker_price)
+    study = optuna.create_study(direction='maximize')
+    study.optimize(func, timeout=720, n_jobs=-1)
+
+    print()
+    print(f'BEST PARAMS: {study.best_params}')
+    print(f'BEST RETURNS: {study.best_value}')
+    print('ALL TRIALS')
+    df_trials = study.trials_dataframe().sort_values('value', ascending=False)
+    print(df_trials)
+
+    df_trials.to_csv('../data/results/optimization_trials.csv', index=False)
