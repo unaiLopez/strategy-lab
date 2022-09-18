@@ -4,34 +4,32 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from utils import train_test_split
 from strategy import custom_indicator
+import config
 
 if __name__ == '__main__':
-    df_optimization_trials = pd.read_csv('../data/results/optimization_trials.csv')
-    ticker_price = pd.read_csv('../data/validation/BTCEUR_1_MIN_INTERVAL.csv')
-    index = pd.DatetimeIndex(ticker_price.Time.values)
-    ticker_price = pd.Series(data=ticker_price.BTCEUR.values, index=index)
+    df_optimization_trials = pd.read_csv(config.PATH_OPTIMIZATION_RESULTS)
+    ticker_price = pd.read_csv(config.PATH_DATA)
+    index = pd.DatetimeIndex(ticker_price.timestamp.values)
+    ticker_price = pd.Series(data=ticker_price.close.values, index=index)
 
     best_trial = df_optimization_trials.iloc[0,:]
     interval = best_trial.params_interval
-    take_profit = best_trial.params_take_profit
-    stop_loss = best_trial.params_stop_loss
     lowess_fraction = best_trial.params_lowess_fraction
     velocity_up = best_trial.params_velocity_up
     velocity_down = best_trial.params_velocity_down
     acceleration_up = best_trial.params_acceleration_up
     acceleration_down = best_trial.params_acceleration_down
-    test_months = 6
 
     ticker_price = ticker_price.resample(interval).last()
     ticker_price.dropna(axis=0, inplace=True)
-    ticker_price_train, ticker_price_test = train_test_split(data=ticker_price, test_months=test_months)
+    ticker_price_train, ticker_price_test = train_test_split(data=ticker_price, test_months=config.TEST_MONTHS)
     
     current_state = -1
     buy_price = None
     accumulated_investment = 1
     accumulated_pct_change = 0
     num_transactions = 0
-    fee_rate = 0.001
+    fee_rate = config.FEE_RATE
     investment_progress = list()
     for i in tqdm(range(len(ticker_price_test))):
         price = ticker_price_test.iloc[i]
@@ -52,7 +50,7 @@ if __name__ == '__main__':
             current_state = 1
             accumulated_investment *= (1 - fee_rate)
             num_transactions += 1
-        elif (signal == -1.0 and current_state == 1) or (accumulated_pct_change >= take_profit) or (accumulated_pct_change <= (-stop_loss)):
+        elif signal == -1.0 and current_state == 1:
             current_state = -1
             accumulated_investment *= (1 - fee_rate)
             accumulated_pct_change = 0
@@ -60,7 +58,7 @@ if __name__ == '__main__':
         
     returns = (accumulated_investment - 1)
 
-    print(f'RETURNS IN {test_months}: {returns}')
+    print(f'RETURNS IN {config.TEST_MONTHS}: {returns}')
     print(f'NUM TRANSACTIONS ARE {num_transactions}')
 
     df_simulation = pd.DataFrame(data=ticker_price_test.values, index=ticker_price_test.index, columns=['y'])

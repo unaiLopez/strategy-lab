@@ -2,6 +2,7 @@ import vectorbt as vbt
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
+import config
 
 def custom_indicator(close_interval: pd.DataFrame, lowess_fraction: int, velocity_up: float, velocity_down: float,
                      acceleration_up: float, acceleration_down: float) -> np.array:
@@ -53,7 +54,7 @@ def custom_indicator(close_interval: pd.DataFrame, lowess_fraction: int, velocit
     return signals
 
 def apply_strategy(close_interval: pd.DataFrame, lowess_fraction: int, velocity_up: float, velocity_down: float,
-                   acceleration_up: float, acceleration_down: float, take_profit: float, stop_loss: float, fee_rate=0.001) -> float:
+                   acceleration_up: float, acceleration_down: float) -> float:
     indicator = vbt.IndicatorFactory(
         class_name='first_and_second_order_derivatives',
         short_name='derivatives',
@@ -81,9 +82,7 @@ def apply_strategy(close_interval: pd.DataFrame, lowess_fraction: int, velocity_
         close_interval,
         entries,
         exits,
-        sl_stop=stop_loss,
-        tp_stop=take_profit,
-        fees=fee_rate
+        fees=config.FEE_RATE
     )
 
     return pf
