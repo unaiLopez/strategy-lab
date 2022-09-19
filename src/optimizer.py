@@ -17,16 +17,9 @@ def objective(trial, close):
     close_interval = close.resample(interval).last()
     close_interval.dropna(axis=0, inplace=True)
     
-    portfolio = apply_strategy(
-        close_interval,
-        lowess_fraction,
-        velocity_up,
-        velocity_down,
-        acceleration_up,
-        acceleration_down
-    )
+    mean_returns = apply_strategy(close_interval, interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down)
     
-    return portfolio.total_return()
+    return mean_returns
 
 if __name__ == '__main__':
     logger = logging.getLogger()
@@ -39,7 +32,7 @@ if __name__ == '__main__':
 
     func = lambda trial: objective(trial, ticker_price_train)
     study = optuna.create_study(direction='maximize')
-    study.optimize(func, timeout=1800, n_jobs=-1)
+    study.optimize(func, timeout=100, n_jobs=1)
 
     print()
     print(f'BEST PARAMS: {study.best_params}')

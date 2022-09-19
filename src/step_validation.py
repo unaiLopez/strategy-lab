@@ -2,24 +2,16 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from tqdm import tqdm
-from utils import train_test_split
+from utils import train_test_split, get_best_trial_parameters
 from strategy import custom_indicator
 import config
 
 if __name__ == '__main__':
-    df_optimization_trials = pd.read_csv(config.PATH_OPTIMIZATION_RESULTS)
+    interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down = get_best_trial_parameters()
+
     ticker_price = pd.read_csv(config.PATH_DATA)
     index = pd.DatetimeIndex(ticker_price.timestamp.values)
     ticker_price = pd.Series(data=ticker_price.close.values, index=index)
-
-    best_trial = df_optimization_trials.iloc[0,:]
-    interval = best_trial.params_interval
-    lowess_fraction = best_trial.params_lowess_fraction
-    velocity_up = best_trial.params_velocity_up
-    velocity_down = best_trial.params_velocity_down
-    acceleration_up = best_trial.params_acceleration_up
-    acceleration_down = best_trial.params_acceleration_down
-
     ticker_price = ticker_price.resample(interval).last()
     ticker_price.dropna(axis=0, inplace=True)
     ticker_price_train, ticker_price_test = train_test_split(data=ticker_price, test_months=config.TEST_MONTHS)
