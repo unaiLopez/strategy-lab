@@ -53,13 +53,13 @@ class ExtractData:
 
         return stock_new_tickers, crypto_tickers
 
-    def extract_crypto_data(self, tickers: list, period: str, from_date, to_date):
+    def extract_crypto_data(self, tickers: list, period: str, from_date, to_date, overwrite=False):
         i = 0
         for ticker in tickers:
             filename = f'{ticker}_{period}.csv'
             i+=1
-            print(f'{i}/{len(tickers)} cryptos extracted.')
-            if filename not in os.listdir('./data/crypto'):
+            if filename not in os.listdir('./data/crypto' or overwrite):
+                print(f'Extracting {i}/{len(tickers)} crypto data.')
                 # TODO: Follow here: Differ incremental with full extraction
                 df = pd.DataFrame(self._binance.get_historical_klines(ticker, period, from_date, to_date))
                 df = df[[0, 4]]
@@ -70,19 +70,18 @@ class ExtractData:
                 df.to_csv(f'./data/crypto/{filename}')
         
 
-    def extract_stock_data(self, tickers: list, period: str, from_date, to_date):
+    def extract_stock_data(self, tickers: list, period: str, from_date, to_date, overwrite=False):
         to_date = (datetime.strptime(to_date, "%Y-%m-%d") - timedelta(minutes=15)).strftime('%Y-%m-%d')
         i = 0
         for ticker in tickers:
             filename = f'{ticker}_{period}.csv'
             i+=1
-            print(f'{i}/{len(tickers)} stocks extracted.')
-            if filename not in os.listdir('./data/stocks'):
+            if filename not in os.listdir('./data/stocks' or overwrite):
+                print(f'Extracting data of {i}/{len(tickers)} stock data.')
                 df = self._alpaca.get_bars(ticker, settings.ACCEPTED_INTERVALS[period], from_date, to_date).df['close']
                 df.to_csv(f'./data/stocks/{filename}')
-            # df.query('ticker==@ticker').to_csv(f'./data/stocks/{ticker}_{period}.csv')
 
-    def merge_tickers_data(self) -> pd.DataFrame:
+    def merge_tickers_data(self, tickers: list) -> pd.DataFrame:
         base_path = './data/'
         active_types = os.listdir(base_path)
         data = None
@@ -92,35 +91,32 @@ class ExtractData:
 
             type_path = base_path + active_type
             for ticker in os.listdir(base_path + active_type):
-                ticker_df = pd.read_csv(f'{type_path}/{ticker}')
-                ticker_df['ticker'] = ticker.split('_')[0]
-                ticker_df.set_index('timestamp', inplace=True)
-                ticker_df.index = pd.to_datetime(ticker_df.index).tz_localize(None)
-                ticker_df = ticker_df.pivot(columns='ticker', values='close')
-                if data is None:
-                    data = ticker_df
-                else:
-                    data = data.merge(ticker_df, left_index=True, right_index=True, how='left')
+                raw_ticker = ticker.split('_')[0]
+                if raw_ticker in tickers:
+                    ticker_df = pd.read_csv(f'{type_path}/{ticker}')
+                    ticker_df['ticker'] = raw_ticker
+                    ticker_df.set_index('timestamp', inplace=True)
+                    ticker_df.index = pd.to_datetime(ticker_df.index).tz_localize(None)
+                    ticker_df = ticker_df.pivot(columns='ticker', values='close')
+                    if data is None:
+                        data = ticker_df
+                    else:
+                        data = data.merge(ticker_df, left_index=True, right_index=True, how='outer')
+
         data.to_csv('./data/all_tickers.csv')
         return data
 
-    def extract_data(self, tickers: list, interval: str='1D', from_date: date='2017-01-01', to_date: date=datetime.now().strftime("%Y-%m-%d"), mode: str='save'):
+    def extract_data(self, tickers: list, interval: str='1D', from_date: date='2017-01-01', to_date: date=datetime.now().strftime("%Y-%m-%d"), overwrite: bool=False):
         self._validate_interval(interval)
         self._validate_tickers(tickers)
-        self._validate_mode(mode)
-
 
         stock_tickers, crypto_tickers = self._split_ticker_types(tickers)
-        self.extract_crypto_data(crypto_tickers, interval, from_date, to_date)
-        self.extract_stock_data(stock_tickers, interval, from_date, to_date)
-        self.df = self.merge_tickers_data()
-        """
-            from_date: None,
-            mode: save, retrieve
-        
-        """
+        self.extract_crypto_data(crypto_tickers, interval, from_date, to_date, overwrite)
+        self.extract_stock_data(stock_tickers, interval, from_date, to_date, overwrite)
+        self.df = self.merge_tickers_data(tickers)
+        return self.df
         
 
 if __name__ == '__main__':
     ed = ExtractData()
-    ed.extract_data(["TSLA", "AAPL", "SPOT", "NIO", "BABA", "SPY", "BTCUSDT", "ETHUSDT", "ADAUSDT", "SOLUSDT"], '5m')
+    ed.extract_data(["TSLA", "GOOGL", "SOLUSDT"], '5m', overwrite=False)

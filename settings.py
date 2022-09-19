@@ -8,7 +8,7 @@ CREDENTIALS = {
 }
 
 TICKERS = {
-    'STOCKS': ["TSLA", "AAPL", "SPOT", "NIO", "BABA", "SPY"],
+    'STOCKS': ["TSLA", "AAPL", "SPOT", "NIO", "BABA", "SPY", "GOOGL"],
     'CRYPTO': ["BTCUSDT", "ETHUSDT", "ADAUSDT", "SOLUSDT"]
 }
 
