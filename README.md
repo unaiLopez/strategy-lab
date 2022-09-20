@@ -37,7 +37,7 @@
 ---
 ## **UNAI**
 
-### TODO
+### To do:
 - Test method using EWM for denoising
 - Prepare vectorbt pipeline to allow multiple asset optimization and plotting
 - Find ways to avoid or reduce overfitting
@@ -48,7 +48,7 @@
 ### In progress:
 - Modify plot_optimization and step_validation so it can work with folds
 
-### Done
+### Done:
 - Bayesian optimization using optuna
 - Implement derivatives strategy
 - Implement pipeline with vectorbt
