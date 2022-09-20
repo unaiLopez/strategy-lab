@@ -4,7 +4,7 @@
 ### In progress:
     - Measurement of the probability of a point's being: Boltzmann's statistics + Hooke's law.
         - Theorical approach already completed
-        - How to calculate the mean energy of the system?
+        - How to calculate the mean energy of the system? https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.ewm.html
 
 ### Done:
     - Tendency checker based on first and second derivatives.
