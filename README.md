@@ -1,6 +1,13 @@
 # REPARTO DE TAREAS
 ## **BILBO**
-1. Seguir investigando approaches como el de la fisica estadística [ - ]
+
+### In progress:
+    - Measurement of the probability of a point's being: Boltzmann's statistics + Hooke's law.
+        - Theorical approach already completed
+        - How to calculate the mean energy of the system?
+
+### Done:
+    - Tendency checker based on first and second derivatives.
 
 ---
 ## **MOLI**
