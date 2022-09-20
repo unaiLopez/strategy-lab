@@ -36,6 +36,22 @@
 
 ---
 ## **UNAI**
+
+### TODO
+- Test method using EWM for denoising
+- Prepare vectorbt pipeline to allow multiple asset optimization and plotting
+- Find ways to avoid or reduce overfitting
+- Check if we can apply taxes to the gains of the bot for simulation
+- Investigate how we can optimize a portfolio based on our strategy
+
+### In progress:
+- Modify plot_optimization and step_validation so it can work with folds
+
+### Done
+- Bayesian optimization using optuna
+- Implement derivatives strategy
+- Implement pipeline with vectorbt
+
 1. Seguir creando un pipeline completo con VectorBT desde optimizacion con algoritmos geneticos, hasta el calculo de profits, visualización y testeo de overfitting (comparando con otros modelos random, buy and hold, etc) [ - ]
 
 # SIGUIENTES PASOS
