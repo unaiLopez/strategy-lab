@@ -43,6 +43,7 @@
 - Find ways to avoid or reduce overfitting
 - Check if we can apply taxes to the gains of the bot for simulation
 - Investigate how we can optimize a portfolio based on our strategy
+- Create benchmark to compare our strategy with different strategies (random, buy and hold, etc)
 
 ### In progress:
 - Modify plot_optimization and step_validation so it can work with folds
@@ -51,9 +52,3 @@
 - Bayesian optimization using optuna
 - Implement derivatives strategy
 - Implement pipeline with vectorbt
-
-1. Seguir creando un pipeline completo con VectorBT desde optimizacion con algoritmos geneticos, hasta el calculo de profits, visualización y testeo de overfitting (comparando con otros modelos random, buy and hold, etc) [ - ]
-
-# SIGUIENTES PASOS
-1. Investigar optimización de portfolios con paquetes como PyFolio [ - ]
-2. Investigar si podemos añadir los impuestos de hacienda sobre ganancias en la optimización [ - ]
