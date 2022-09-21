@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import optuna
 import logging
 
@@ -6,7 +7,7 @@ from strategy import apply_strategy
 from utils import train_test_split
 import config
 
-def objective(trial, close):
+def objective(trial: object, close: pd.DataFrame) -> float:
     interval = trial.suggest_categorical('interval', ['1h', '2h', '4h', '6h', '12h'])
     lowess_fraction = trial.suggest_int('lowess_fraction', 20, 60, step=5)
     velocity_up = trial.suggest_float('velocity_up', 0.05, 1.0, step=0.05)
@@ -17,9 +18,10 @@ def objective(trial, close):
     close_interval = close.resample(interval).last()
     close_interval.dropna(axis=0, inplace=True)
     
-    mean_returns = apply_strategy(close_interval, interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down)
-    
-    return mean_returns
+    portfolios = apply_strategy(close_interval, interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, use_folds=config.USE_FOLDS_IN_OPTIMIZATION)
+    returns = [portfolio.total_return() for portfolio in portfolios]
+
+    return np.mean(returns)
 
 if __name__ == '__main__':
     logger = logging.getLogger()
@@ -32,7 +34,7 @@ if __name__ == '__main__':
 
     func = lambda trial: objective(trial, ticker_price_train)
     study = optuna.create_study(direction='maximize')
-    study.optimize(func, timeout=100, n_jobs=1)
+    study.optimize(func, timeout=360, n_jobs=1)
 
     print()
     print(f'BEST PARAMS: {study.best_params}')

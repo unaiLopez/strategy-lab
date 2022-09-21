@@ -54,44 +54,53 @@ def custom_indicator(close_interval: pd.DataFrame, lowess_fraction: int, velocit
 
     return signals
 
+def vectorize_strategy(close: pd.DataFrame, lowess_fraction: int, velocity_up: float, velocity_down: float,
+             acceleration_up: float, acceleration_down: float):
+
+    indicator = vbt.IndicatorFactory(
+        class_name='first_and_second_order_derivatives',
+        short_name='derivatives',
+        input_names=['close'],
+        param_names=['lowess_fraction', 'velocity_up', 'velocity_down', 'acceleration_up', 'acceleration_down'],
+        output_names=['signals']
+    ).from_apply_func(
+        custom_indicator,
+        lowess_fraction=lowess_fraction,
+        velocity_up=velocity_up,
+        velocity_down=velocity_down,
+        acceleration_up=acceleration_up,
+        acceleration_down=acceleration_down,
+        keep_pd=True
+    )
+
+    res = indicator.run(
+        close
+    )
+
+    entries = res.signals == 1.0
+    exits = res.signals == -1.0
+
+    pf = vbt.Portfolio.from_signals(
+        close,
+        entries,
+        exits,
+        fees=config.FEE_RATE
+    )
+
+    return pf
+
 def apply_strategy(close_interval: pd.DataFrame, interval: str, lowess_fraction: int, velocity_up: float, velocity_down: float,
-                   acceleration_up: float, acceleration_down: float) -> float:
+                   acceleration_up: float, acceleration_down: float, use_folds: float) -> float:
 
-    folds = create_folds(close_interval, interval)
-    returns = list()
-    for fold_indexes in folds:
-        close_fold = close_interval.iloc[fold_indexes]
+    portfolios = list()
+    if use_folds:
+        folds = create_folds(close_interval, interval)
+        for fold_indexes in folds:
+            close_fold = close_interval.iloc[fold_indexes]
+            portfolio = vectorize_strategy(close_fold, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down)
+            portfolios.append(portfolio)
+    else:
+        portfolio = vectorize_strategy(close_interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down)
+        portfolios.append(portfolio)
 
-        indicator = vbt.IndicatorFactory(
-            class_name='first_and_second_order_derivatives',
-            short_name='derivatives',
-            input_names=['close'],
-            param_names=['lowess_fraction', 'velocity_up', 'velocity_down', 'acceleration_up', 'acceleration_down'],
-            output_names=['signals']
-        ).from_apply_func(
-            custom_indicator,
-            lowess_fraction=lowess_fraction,
-            velocity_up=velocity_up,
-            velocity_down=velocity_down,
-            acceleration_up=acceleration_up,
-            acceleration_down=acceleration_down,
-            keep_pd=True
-        )
-
-        res = indicator.run(
-            close_fold
-        )
-
-        entries = res.signals == 1.0
-        exits = res.signals == -1.0
-
-        pf = vbt.Portfolio.from_signals(
-            close_fold,
-            entries,
-            exits,
-            fees=config.FEE_RATE
-        )
-        porfolio_return = pf.total_return()
-        returns.append(porfolio_return)
-
-    return np.mean(returns)
+    return portfolios

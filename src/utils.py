@@ -23,4 +23,5 @@ def get_best_trial_parameters() -> Tuple[str, int, float, float, float, float]:
     acceleration_up = best_trial.params_acceleration_up
     acceleration_down = best_trial.params_acceleration_down
 
+
     return interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down

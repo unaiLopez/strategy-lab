@@ -13,7 +13,8 @@ if __name__ == '__main__':
     close_interval = ticker_price.resample(interval).last()
     close_interval.dropna(axis=0, inplace=True)
     ticker_price_train, _ = train_test_split(data=close_interval, test_months=config.TEST_MONTHS)
-    portfolio = apply_strategy(ticker_price_train, interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down)
+    portfolios = apply_strategy(ticker_price_train, interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, use_folds=config.USE_FOLDS_IN_PLOT)
+    portfolio = portfolios[0]
     
     returns = portfolio.total_return()
     print('ALL RETURNS')
