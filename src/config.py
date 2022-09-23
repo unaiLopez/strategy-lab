@@ -1,6 +1,9 @@
 FEE_RATE = 0.001 #broker fee rate
-TEST_MONTHS = 6 #months of testing
-PATH_DATA = '../data/validation/BTCUSDT_5_MIN_INTERVAL.csv'
-PATH_OPTIMIZATION_RESULTS = '../data/results/optimization_trials.csv'
-USE_FOLDS_IN_OPTIMIZATION = False
-USE_FOLDS_IN_PLOT = False
+TEST_MONTHS = 12 #months of testing
+FOLDS_MONTHS = 6 #month size for optimization folds
+OPTIMIZATION_TIME = 12 #time to optimize
+PATH_DATA = '../data/validation/BTCUSDT_5_MIN_INTERVAL.csv' #path to validation data
+PATH_OPTIMIZATION_RESULTS = '../data/results/optimization_trials.csv' #path to save optimization results
+USE_FOLDS_IN_OPTIMIZATION = True #optimize using cross validation
+N_JOBS = -1 #number of cores to execute optimization
+DIRECTION = 'maximize' #optimization direction

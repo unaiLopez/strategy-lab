@@ -5,7 +5,7 @@ from utils import train_test_split, get_best_trial_parameters
 import config
 
 if __name__ == '__main__':
-    interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down = get_best_trial_parameters()
+    interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi = get_best_trial_parameters()
 
     ticker_price = pd.read_csv(config.PATH_DATA)
     index = pd.DatetimeIndex(ticker_price.timestamp.values)
@@ -13,7 +13,7 @@ if __name__ == '__main__':
     close_interval = ticker_price.resample(interval).last()
     close_interval.dropna(axis=0, inplace=True)
     ticker_price_train, _ = train_test_split(data=close_interval, test_months=config.TEST_MONTHS)
-    portfolios = apply_strategy(ticker_price_train, interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, use_folds=config.USE_FOLDS_IN_PLOT)
+    portfolios = apply_strategy(ticker_price_train, interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi, use_folds=False)
     portfolio = portfolios[0]
     
     returns = portfolio.total_return()

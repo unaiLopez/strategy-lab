@@ -14,11 +14,18 @@ def objective(trial: object, close: pd.DataFrame) -> float:
     velocity_down = trial.suggest_float('velocity_down', -1.0, -0.05, step=0.05)
     acceleration_up = trial.suggest_float('acceleration_up', 0.05, 1.0, step=0.05)
     acceleration_down = trial.suggest_float('acceleration_down', -1.0, -0.05, step=0.05)
+    rsi_window = trial.suggest_int('rsi_window', 10, 50, step=5)
+    lower_rsi = trial.suggest_int('lower_rsi', 15, 40, step=5)
+    upper_rsi = trial.suggest_int('upper_rsi', 55, 90, step=5)
 
     close_interval = close.resample(interval).last()
     close_interval.dropna(axis=0, inplace=True)
     
-    portfolios = apply_strategy(close_interval, interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, use_folds=config.USE_FOLDS_IN_OPTIMIZATION)
+    portfolios = apply_strategy(
+        close_interval, interval, lowess_fraction, velocity_up,
+        velocity_down, acceleration_up, acceleration_down,
+        rsi_window, lower_rsi, upper_rsi, use_folds=config.USE_FOLDS_IN_OPTIMIZATION
+    )
     returns = [portfolio.total_return() for portfolio in portfolios]
 
     return np.mean(returns)
@@ -33,8 +40,8 @@ if __name__ == '__main__':
     ticker_price_train, _ = train_test_split(data=ticker_price, test_months=config.TEST_MONTHS)
 
     func = lambda trial: objective(trial, ticker_price_train)
-    study = optuna.create_study(direction='maximize')
-    study.optimize(func, timeout=360, n_jobs=1)
+    study = optuna.create_study(direction=config.DIRECTION)
+    study.optimize(func, timeout=config.OPTIMIZATION_TIME, n_jobs=config.N_JOBS)
 
     print()
     print(f'BEST PARAMS: {study.best_params}')

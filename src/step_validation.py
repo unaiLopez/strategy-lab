@@ -7,7 +7,7 @@ from strategy import custom_indicator
 import config
 
 if __name__ == '__main__':
-    interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down = get_best_trial_parameters()
+    interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi = get_best_trial_parameters()
 
     ticker_price = pd.read_csv(config.PATH_DATA)
     index = pd.DatetimeIndex(ticker_price.timestamp.values)
@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
         ticker_price_train = pd.concat([ticker_price_train, pd.Series(price)], axis=0)
         pct_changes = ticker_price_train.pct_change().to_numpy()
-        signals = custom_indicator(ticker_price_train, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down)
+        signals = custom_indicator(ticker_price_train, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi)
 
         pct_change = pct_changes[-1]
         signal = signals[-1]
