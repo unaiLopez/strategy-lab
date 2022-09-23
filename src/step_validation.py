@@ -9,9 +9,12 @@ import config
 if __name__ == '__main__':
     interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi = get_best_trial_parameters()
 
+    tickers = ['BTCUSDT']
     ticker_price = pd.read_csv(config.OPTIMIZATION['PATH_DATA'])
-    index = pd.DatetimeIndex(ticker_price.timestamp.values)
-    ticker_price = pd.Series(data=ticker_price.close.values, index=index)
+    timestamp = pd.DatetimeIndex(ticker_price.timestamp.values)
+    ticker_price.index = timestamp
+    ticker_price = ticker_price[tickers]
+    ticker_price[ticker_price.index >= '2020-11-20']
     ticker_price = ticker_price.resample(interval).last()
     ticker_price.dropna(axis=0, inplace=True)
     ticker_price_train, ticker_price_test = train_test_split(data=ticker_price, test_months=config.OPTIMIZATION['TEST_MONTHS'])

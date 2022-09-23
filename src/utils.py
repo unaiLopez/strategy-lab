@@ -4,7 +4,7 @@ import pandas as pd
 from typing import Tuple
 import config
 
-def train_test_split(data: pd.Series, test_months: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def train_test_split(data: pd.DataFrame, test_months: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
     last_date = data.index.max()
     cut_date = last_date - datetime.timedelta(days=test_months*30)
     data_train = data[data.index <= cut_date]
