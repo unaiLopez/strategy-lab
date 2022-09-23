@@ -39,16 +39,16 @@
 
 ### To do:
 - Test method using EWM for denoising
-- Prepare vectorbt pipeline to allow multiple asset optimization and plotting
 - Find ways to avoid or reduce overfitting
 - Check if we can apply taxes to the gains of the bot for simulation
 - Investigate how we can optimize a portfolio based on our strategy
 - Create benchmark to compare our strategy with different strategies (random, buy and hold, etc)
 
 ### In progress:
-- Modify plot_optimization and step_validation so it can work with folds
+- Prepare vectorbt pipeline to allow multiple asset optimization and plotting
 
 ### Done:
+- Modify plot_optimization and step_validation so it can work with folds
 - Bayesian optimization using optuna
 - Implement derivatives strategy
 - Implement pipeline with vectorbt
