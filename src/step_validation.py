@@ -9,19 +9,19 @@ import config
 if __name__ == '__main__':
     interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi = get_best_trial_parameters()
 
-    ticker_price = pd.read_csv(config.PATH_DATA)
+    ticker_price = pd.read_csv(config.OPTIMIZATION['PATH_DATA'])
     index = pd.DatetimeIndex(ticker_price.timestamp.values)
     ticker_price = pd.Series(data=ticker_price.close.values, index=index)
     ticker_price = ticker_price.resample(interval).last()
     ticker_price.dropna(axis=0, inplace=True)
-    ticker_price_train, ticker_price_test = train_test_split(data=ticker_price, test_months=config.TEST_MONTHS)
+    ticker_price_train, ticker_price_test = train_test_split(data=ticker_price, test_months=config.OPTIMIZATION['TEST_MONTHS'])
     
     current_state = -1
     buy_price = None
     accumulated_investment = 1
     accumulated_pct_change = 0
     num_transactions = 0
-    fee_rate = config.FEE_RATE
+    fee_rate = config.OPTIMIZATION['FEE_RATE']
     investment_progress = list()
     for i in tqdm(range(len(ticker_price_test))):
         price = ticker_price_test.iloc[i]
@@ -50,7 +50,7 @@ if __name__ == '__main__':
         
     returns = (accumulated_investment - 1)
 
-    print(f'RETURNS IN {config.TEST_MONTHS}: {returns}')
+    print(f"RETURNS IN {config.OPTIMIZATION['TEST_MONTHS']}: {returns}")
     print(f'NUM TRANSACTIONS ARE {num_transactions}')
 
     df_simulation = pd.DataFrame(data=ticker_price_test.values, index=ticker_price_test.index, columns=['y'])

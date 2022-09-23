@@ -87,7 +87,7 @@ def vectorize_strategy(close: pd.DataFrame, lowess_fraction: int, velocity_up: f
         close,
         entries,
         exits,
-        fees=config.FEE_RATE
+        fees=config.OPTIMIZATION['FEE_RATE']
     )
 
     return pf

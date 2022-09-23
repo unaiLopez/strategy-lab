@@ -9,3 +9,4 @@ numba==0.56.2
 optuna==3.0.2
 tqdm==4.64.0
 python-binance==1.0.16
+alpaca-trade-api==2.3.0

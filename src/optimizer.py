@@ -24,7 +24,7 @@ def objective(trial: object, close: pd.DataFrame) -> float:
     portfolios = apply_strategy(
         close_interval, interval, lowess_fraction, velocity_up,
         velocity_down, acceleration_up, acceleration_down,
-        rsi_window, lower_rsi, upper_rsi, use_folds=config.USE_FOLDS_IN_OPTIMIZATION
+        rsi_window, lower_rsi, upper_rsi, use_folds=config.OPTIMIZATION['USE_FOLDS_IN_OPTIMIZATION']
     )
     returns = [portfolio.total_return() for portfolio in portfolios]
 
@@ -34,14 +34,14 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     logger.setLevel(level=logging.INFO)
 
-    ticker_price = pd.read_csv(config.PATH_DATA)
+    ticker_price = pd.read_csv(config.OPTIMIZATION['PATH_DATA'])
     index = pd.DatetimeIndex(ticker_price.timestamp.values)
     ticker_price = pd.Series(data=ticker_price.close.values, index=index)
-    ticker_price_train, _ = train_test_split(data=ticker_price, test_months=config.TEST_MONTHS)
+    ticker_price_train, _ = train_test_split(data=ticker_price, test_months=config.OPTIMIZATION['TEST_MONTHS'])
 
     func = lambda trial: objective(trial, ticker_price_train)
-    study = optuna.create_study(direction=config.DIRECTION)
-    study.optimize(func, timeout=config.OPTIMIZATION_TIME, n_jobs=config.N_JOBS)
+    study = optuna.create_study(direction=config.OPTIMIZATION['DIRECTION'])
+    study.optimize(func, timeout=config.OPTIMIZATION['OPTIMIZATION_TIME'], n_jobs=config.OPTIMIZATION['N_JOBS'])
 
     print()
     print(f'BEST PARAMS: {study.best_params}')
@@ -50,4 +50,4 @@ if __name__ == '__main__':
     df_trials = study.trials_dataframe().sort_values('value', ascending=False)
     print(df_trials)
 
-    df_trials.to_csv(config.PATH_OPTIMIZATION_RESULTS, index=False)
+    df_trials.to_csv(config.OPTIMIZATION['PATH_OPTIMIZATION_RESULTS'], index=False)

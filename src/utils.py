@@ -13,7 +13,7 @@ def train_test_split(data: pd.Series, test_months: int) -> Tuple[pd.DataFrame, p
     return data_train, data_test
 
 def get_best_trial_parameters() -> Tuple[str, int, float, float, float, float, int, int, int]:
-    df_optimization_trials = pd.read_csv(config.PATH_OPTIMIZATION_RESULTS)
+    df_optimization_trials = pd.read_csv(config.OPTIMIZATION['PATH_OPTIMIZATION_RESULTS'])
 
     best_trial = df_optimization_trials.iloc[0,:]
     interval = best_trial.params_interval
@@ -25,7 +25,5 @@ def get_best_trial_parameters() -> Tuple[str, int, float, float, float, float, i
     rsi_window = best_trial.params_rsi_window
     lower_rsi = best_trial.params_lower_rsi
     upper_rsi = best_trial.params_upper_rsi
-
-
 
     return interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi

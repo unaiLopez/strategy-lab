@@ -1,43 +1,41 @@
-from email.mime import base
 import os
-import sys
-sys.path.append('../')
-sys.path.append('./')
-print(sys.path)
-import settings
+import config
 import pandas as pd
 
 from datetime import date, datetime, timedelta
 from binance.client import Client
 import alpaca_trade_api as api
+import logging
+logger = logging.getLogger()
+logger.setLevel(level=logging.INFO)
 
 class ExtractData:
 
     def __init__(self):
-        self._alpaca = api.REST(settings.CREDENTIALS['ALPACA']['API_KEY'], settings.CREDENTIALS['ALPACA']['SECRET_KEY'])
+        self._alpaca = api.REST(config.CREDENTIALS['ALPACA']['API_KEY'], config.CREDENTIALS['ALPACA']['SECRET_KEY'])
         self._binance = Client()
 
     def _validate_interval(self, interval: str) -> None:
-        if interval not in settings.ACCEPTED_INTERVALS.keys():
+        if interval not in config.ACCEPTED_INTERVALS.keys():
             raise Exception(
-                f'Interval value {interval} is not accepted by APIs. Please, use one of the next formats: {settings.keys()}'
+                f'Interval value {interval} is not accepted by APIs. Please, use one of the next formats: {config.keys()}'
                 )
 
     def _validate_tickers(self, tickers: list):
         not_contemplated_tickers = []
         for ticker in tickers:
-            if ticker not in settings.TICKERS['CRYPTO'] and ticker not in settings.TICKERS['STOCKS']:
+            if ticker not in config.TICKERS['CRYPTO'] and ticker not in config.TICKERS['STOCKS']:
                 not_contemplated_tickers.append(ticker)
 
         if len(not_contemplated_tickers) > 0:
             raise Exception(
-                f'Ticker/s {not_contemplated_tickers} not contemplated. Please, add them to settings.py file in TICKERS dictionary.'
+                f'Ticker/s {not_contemplated_tickers} not contemplated. Please, add them to config.py file in TICKERS dictionary.'
             )
 
     def _validate_mode(self, mode: str):
-        if mode not in settings.MODE:
+        if mode not in config.MODE:
             raise Exception(
-                f'Mode {mode} not contemplated. Please, add it to settings.py file in MODES list.'
+                f'Mode {mode} not contemplated. Please, add it to config.py file in MODES list.'
             )
 
     def _split_ticker_types(self, tickers: list):
@@ -45,10 +43,10 @@ class ExtractData:
         stock_new_tickers = []
 
         for ticker in tickers:
-            if ticker in settings.TICKERS['CRYPTO']:
+            if ticker in config.TICKERS['CRYPTO']:
                 crypto_tickers.append(ticker)
             
-            elif ticker in settings.TICKERS['STOCKS']:
+            elif ticker in config.TICKERS['STOCKS']:
                 stock_new_tickers.append(ticker)
 
         return stock_new_tickers, crypto_tickers
@@ -58,16 +56,15 @@ class ExtractData:
         for ticker in tickers:
             filename = f'{ticker}_{period}.csv'
             i+=1
-            if filename not in os.listdir('./data/crypto' or overwrite):
-                print(f'Extracting {i}/{len(tickers)} crypto data.')
-                # TODO: Follow here: Differ incremental with full extraction
+            if filename not in os.listdir('../data/crypto') or overwrite:
+                logger.info(f'Extracting {i}/{len(tickers)} crypto data.')
                 df = pd.DataFrame(self._binance.get_historical_klines(ticker, period, from_date, to_date))
                 df = df[[0, 4]]
                 df.columns = ['timestamp', 'close']
                 df = df.set_index('timestamp')
                 df.index = pd.to_datetime(df.index, unit='ms')
 
-                df.to_csv(f'./data/crypto/{filename}')
+                df.to_csv(f'../data/crypto/{filename}')
         
 
     def extract_stock_data(self, tickers: list, period: str, from_date, to_date, overwrite=False):
@@ -76,13 +73,13 @@ class ExtractData:
         for ticker in tickers:
             filename = f'{ticker}_{period}.csv'
             i+=1
-            if filename not in os.listdir('./data/stocks' or overwrite):
-                print(f'Extracting data of {i}/{len(tickers)} stock data.')
-                df = self._alpaca.get_bars(ticker, settings.ACCEPTED_INTERVALS[period], from_date, to_date).df['close']
-                df.to_csv(f'./data/stocks/{filename}')
+            if filename not in os.listdir('../data/stocks') or overwrite:
+                logger.info(f'Extracting data of {i}/{len(tickers)} stock data.')
+                df = self._alpaca.get_bars(ticker, config.ACCEPTED_INTERVALS[period], from_date, to_date).df['close']
+                df.to_csv(f'../data/stocks/{filename}')
 
     def merge_tickers_data(self, tickers: list) -> pd.DataFrame:
-        base_path = './data/'
+        base_path = '../data/'
         active_types = os.listdir(base_path)
         data = None
         for active_type in active_types:
@@ -103,7 +100,7 @@ class ExtractData:
                     else:
                         data = data.merge(ticker_df, left_index=True, right_index=True, how='outer')
 
-        data.to_csv('./data/all_tickers.csv')
+        data.to_csv('../data/all_tickers.csv')
         return data
 
     def extract_data(self, tickers: list, interval: str='1D', from_date: date='2017-01-01', to_date: date=datetime.now().strftime("%Y-%m-%d"), overwrite: bool=False):
@@ -116,7 +113,6 @@ class ExtractData:
         self.df = self.merge_tickers_data(tickers)
         return self.df
         
-
 if __name__ == '__main__':
     ed = ExtractData()
-    ed.extract_data(["TSLA", "GOOGL", "SOLUSDT"], '5m', overwrite=False)
+    ed.extract_data(['TSLA', 'GOOGL', 'SOLUSDT', 'BTCUSDT', 'ETHUSDT'], '5m', overwrite=True)
