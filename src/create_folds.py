@@ -1,11 +1,11 @@
 import config
 
 def create_folds(resampled_df, interval):
-    if interval == '5m':
+    if interval == '5min':
         size = (30*24*12*config.OPTIMIZATION['FOLDS_MONTHS'])
-    if interval == '15m':
+    if interval == '15min':
         size = (30*24*4*config.OPTIMIZATION['FOLDS_MONTHS'])
-    elif interval == '30m':
+    elif interval == '30min':
         size = (30*24*2*config.OPTIMIZATION['FOLDS_MONTHS'])
     elif interval == '1h':
         size = (30*24*config.OPTIMIZATION['FOLDS_MONTHS'])

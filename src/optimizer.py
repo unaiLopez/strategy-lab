@@ -8,7 +8,7 @@ from utils import train_test_split
 import config
 
 def objective(trial: object, close: pd.DataFrame) -> float:
-    interval = trial.suggest_categorical('interval', ['1h', '2h', '4h', '6h', '12h'])
+    interval = trial.suggest_categorical('interval', ['5min', '15min', '30min', '1h', '2h', '4h', '6h', '12h', '24h'])
     lowess_fraction = trial.suggest_int('lowess_fraction', 20, 60, step=5)
     velocity_up = trial.suggest_float('velocity_up', 0.05, 1.0, step=0.05)
     velocity_down = trial.suggest_float('velocity_down', -1.0, -0.05, step=0.05)
@@ -38,8 +38,8 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     logger.setLevel(level=logging.INFO)
 
-    tickers = ['SOLUSDT', 'BTCUSDT', 'ETHUSDT']
-    #tickers = ['BTCUSDT']
+    #tickers = ['SOLUSDT', 'BTCUSDT', 'ETHUSDT']
+    tickers = ['BTCUSDT']
     ticker_price = pd.read_csv(config.OPTIMIZATION['PATH_DATA'])
     timestamp = pd.DatetimeIndex(ticker_price.timestamp.values)
     ticker_price.index = timestamp
