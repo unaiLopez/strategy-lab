@@ -26,7 +26,11 @@ def objective(trial: object, close: pd.DataFrame) -> float:
         velocity_down, acceleration_up, acceleration_down,
         rsi_window, lower_rsi, upper_rsi, use_folds=config.OPTIMIZATION['USE_FOLDS_IN_OPTIMIZATION']
     )
-    returns = [portfolio.total_return() for portfolio in portfolios]
+    
+    if close.shape[1] > 1:
+        returns = [np.mean(portfolio.total_return()) for portfolio in portfolios]
+    else:
+        returns = [portfolio.total_return() for portfolio in portfolios]
 
     return np.mean(returns)
 
@@ -34,8 +38,8 @@ if __name__ == '__main__':
     logger = logging.getLogger()
     logger.setLevel(level=logging.INFO)
 
-    #tickers = ['SOLUSDT', 'BTCUSDT', 'ETHUSDT']
-    tickers = ['BTCUSDT']
+    tickers = ['SOLUSDT', 'BTCUSDT', 'ETHUSDT']
+    #tickers = ['BTCUSDT']
     ticker_price = pd.read_csv(config.OPTIMIZATION['PATH_DATA'])
     timestamp = pd.DatetimeIndex(ticker_price.timestamp.values)
     ticker_price.index = timestamp

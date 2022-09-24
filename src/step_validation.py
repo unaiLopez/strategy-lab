@@ -9,6 +9,7 @@ import config
 if __name__ == '__main__':
     interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi = get_best_trial_parameters()
 
+    tickers = ['SOLUSDT', 'BTCUSDT', 'ETHUSDT']
     tickers = ['BTCUSDT']
     ticker_price = pd.read_csv(config.OPTIMIZATION['PATH_DATA'])
     timestamp = pd.DatetimeIndex(ticker_price.timestamp.values)

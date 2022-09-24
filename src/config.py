@@ -6,9 +6,9 @@ OPTIMIZATION = {
     'FEE_RATE': 0.001, #broker fee rate
     'TEST_MONTHS': 12, #months of testing
     'FOLDS_MONTHS': 6, #month size for optimization folds
-    'OPTIMIZATION_TIME': 120, #time to optimize
+    'OPTIMIZATION_TIME': 12, #time to optimize
     'USE_FOLDS_IN_OPTIMIZATION': True, #optimize using cross validation
-    'N_JOBS': -1, #number of cores to execute optimization
+    'N_JOBS': 1, #number of cores to execute optimization
     'DIRECTION': 'maximize', #optimization direction
     'PATH_OPTIMIZATION_RESULTS': '../data/results/optimization_trials.csv', #path to save optimization results
     'PATH_DATA': '../data/all_tickers.csv'  #path to optimization data
