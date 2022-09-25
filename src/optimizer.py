@@ -4,7 +4,7 @@ import optuna
 import logging
 
 from strategy import apply_strategy
-from utils import train_test_split
+from utils import train_test_split, prepare_asset_dataframe_format
 import config
 
 def objective(trial: object, close: pd.DataFrame) -> float:
@@ -40,12 +40,7 @@ if __name__ == '__main__':
 
     #tickers = ['SOLUSDT', 'BTCUSDT', 'ETHUSDT']
     tickers = ['BTCUSDT']
-    ticker_price = pd.read_csv(config.OPTIMIZATION['PATH_DATA'])
-    timestamp = pd.DatetimeIndex(ticker_price.timestamp.values)
-    ticker_price.index = timestamp
-    ticker_price = ticker_price[tickers]
-    ticker_price[ticker_price.index >= '2020-11-20']
-    
+    ticker_price = prepare_asset_dataframe_format(tickers=tickers)
     ticker_price_train, _ = train_test_split(data=ticker_price, test_months=config.OPTIMIZATION['TEST_MONTHS'])
     func = lambda trial: objective(trial, ticker_price_train)
     study = optuna.create_study(direction=config.OPTIMIZATION['DIRECTION'])

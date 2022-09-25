@@ -11,7 +11,8 @@ OPTIMIZATION = {
     'N_JOBS': -1, #number of cores to execute optimization
     'DIRECTION': 'maximize', #optimization direction
     'PATH_OPTIMIZATION_RESULTS': '../data/results/optimization_trials.csv', #path to save optimization results
-    'PATH_DATA': '../data/all_tickers.csv'  #path to optimization data
+    'PATH_DATA': '../data/all_tickers.csv',  #path to optimization data
+    'START_DATE': '2020-11-20' #optimization data start date
 }
 
 

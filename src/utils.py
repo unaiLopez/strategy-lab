@@ -1,7 +1,7 @@
 import datetime
 import pandas as pd
 
-from typing import Tuple
+from typing import Tuple, List
 import config
 
 def train_test_split(data: pd.DataFrame, test_months: int) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -27,3 +27,12 @@ def get_best_trial_parameters() -> Tuple[str, int, float, float, float, float, i
     upper_rsi = best_trial.params_upper_rsi
 
     return interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi
+
+def prepare_asset_dataframe_format(tickers: List[str]) -> pd.DataFrame:
+    ticker_price = pd.read_csv(config.OPTIMIZATION['PATH_DATA'])
+    timestamp = pd.DatetimeIndex(ticker_price.timestamp.values)
+    ticker_price.index = timestamp
+    ticker_price = ticker_price[tickers]
+    ticker_price[ticker_price.index >= config.OPTIMIZATION['START_DATE']]
+
+    return ticker_price
