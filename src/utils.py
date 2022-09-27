@@ -12,7 +12,7 @@ def train_test_split(data: pd.DataFrame, test_months: int) -> Tuple[pd.DataFrame
 
     return data_train, data_test
 
-def get_best_trial_parameters() -> Tuple[str, int, float, float, float, float, int, int, int]:
+def get_best_trial_parameters() -> Tuple[str, int, float, float, float, float]:
     df_optimization_trials = pd.read_csv(config.OPTIMIZATION['PATH_OPTIMIZATION_RESULTS'])
 
     best_trial = df_optimization_trials.iloc[0,:]
@@ -22,11 +22,10 @@ def get_best_trial_parameters() -> Tuple[str, int, float, float, float, float, i
     velocity_down = best_trial.params_velocity_down
     acceleration_up = best_trial.params_acceleration_up
     acceleration_down = best_trial.params_acceleration_down
-    rsi_window = best_trial.params_rsi_window
-    lower_rsi = best_trial.params_lower_rsi
-    upper_rsi = best_trial.params_upper_rsi
+    take_profit = best_trial.params_take_profit
+    stop_loss = best_trial.params_stop_loss
 
-    return interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, rsi_window, lower_rsi, upper_rsi
+    return interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, take_profit, stop_loss
 
 def prepare_asset_dataframe_format(tickers: List[str]) -> pd.DataFrame:
     ticker_price = pd.read_csv(config.OPTIMIZATION['PATH_DATA'])
