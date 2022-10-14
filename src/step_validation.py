@@ -7,10 +7,10 @@ from strategy import custom_indicator
 import config
 
 if __name__ == '__main__':
-    interval, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down, take_profit, stop_loss = get_best_trial_parameters()
+    best_parameters_dict = get_best_trial_parameters()
 
     ticker_price = prepare_asset_dataframe_format(tickers=config.OPTIMIZATION['TICKERS'])
-    ticker_price = ticker_price.resample(interval).last()
+    ticker_price = ticker_price.resample(best_parameters_dict['interval']).last()
     ticker_price.dropna(axis=0, inplace=True)
     price_train, price_test = train_test_split(data=ticker_price, test_months=config.OPTIMIZATION['TEST_MONTHS'])
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
             df_price = pd.DataFrame(data=[price], columns=list(ticker_price_train.columns))
             ticker_price_train = pd.concat([ticker_price_train, df_price], axis=0)
             pct_changes = ticker_price_train.pct_change().to_numpy()
-            signals = custom_indicator(ticker_price_train, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down)
+            signals = custom_indicator(ticker_price_train, **best_parameters_dict)
 
             pct_change = pct_changes[-1,0]
             signal = signals[-1]
@@ -42,7 +42,7 @@ if __name__ == '__main__':
                 current_state = 1
                 accumulated_investment *= (1 - fee_rate)
                 num_transactions += 1
-            elif (signal == -1.0 and current_state == 1) or (accumulated_pct_change >= take_profit) or (accumulated_pct_change <= -stop_loss):
+            elif (signal == -1.0 and current_state == 1) or (accumulated_pct_change >= best_parameters_dict['take_profit']) or (accumulated_pct_change <= -best_parameters_dict['stop_loss']):
                 current_state = -1
                 accumulated_investment *= (1 - fee_rate)
                 accumulated_pct_change = 0

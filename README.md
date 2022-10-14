@@ -52,3 +52,8 @@
 - Bayesian optimization using optuna
 - Implement derivatives strategy
 - Implement pipeline with vectorbt
+
+
+---
+
+# Pipeline Flux
