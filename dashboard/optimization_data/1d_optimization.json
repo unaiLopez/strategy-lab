@@ -1,0 +1,267 @@
+{
+    "0": {
+        "train_date_start": "2017-06-09 04:00:00",
+        "train_date_end": "2017-10-16 04:00:00",
+        "test_dates_start": "2017-10-17 04:00:00",
+        "test_dates_end": "2018-01-11 05:00:00",
+        "best_params": {
+            "lowess_fraction": 40,
+            "velocity_up": 0.05,
+            "velocity_down": -0.35,
+            "acceleration_up": 0.35000000000000003,
+            "acceleration_down": -0.29999999999999993,
+            "take_profit": 0.3,
+            "stop_loss": 0.2
+        },
+        "best_value": 0.4005960885659354,
+        "test_value": 0.055593984254639114
+    },
+    "1": {
+        "train_date_start": "2017-10-11 04:00:00",
+        "train_date_end": "2018-02-20 05:00:00",
+        "test_dates_start": "2018-02-21 05:00:00",
+        "test_dates_end": "2018-05-16 04:00:00",
+        "best_params": {
+            "lowess_fraction": 50,
+            "velocity_up": 0.05,
+            "velocity_down": -0.7,
+            "acceleration_up": 0.6000000000000001,
+            "acceleration_down": -0.29999999999999993,
+            "take_profit": 0.25,
+            "stop_loss": 0.3
+        },
+        "best_value": 0.36056017185701317,
+        "test_value": 0.14615956872432853
+    },
+    "2": {
+        "train_date_start": "2018-02-13 05:00:00",
+        "train_date_end": "2018-06-21 04:00:00",
+        "test_dates_start": "2018-06-22 04:00:00",
+        "test_dates_end": "2018-09-17 04:00:00",
+        "best_params": {
+            "lowess_fraction": 25,
+            "velocity_up": 0.25,
+            "velocity_down": -0.25,
+            "acceleration_up": 0.9500000000000001,
+            "acceleration_down": -0.09999999999999998,
+            "take_profit": 0.2,
+            "stop_loss": 0.15000000000000002
+        },
+        "best_value": 0.6894085447621219,
+        "test_value": 0.13529150463141215
+    },
+    "3": {
+        "train_date_start": "2018-06-18 04:00:00",
+        "train_date_end": "2018-10-23 04:00:00",
+        "test_dates_start": "2018-10-24 04:00:00",
+        "test_dates_end": "2019-01-22 05:00:00",
+        "best_params": {
+            "lowess_fraction": 35,
+            "velocity_up": 0.1,
+            "velocity_down": -0.35,
+            "acceleration_up": 0.9500000000000001,
+            "acceleration_down": -0.35,
+            "take_profit": 0.15000000000000002,
+            "stop_loss": 0.1
+        },
+        "best_value": 1.0344202795509734,
+        "test_value": -0.0004995004995004137
+    },
+    "4": {
+        "train_date_start": "2018-10-18 04:00:00",
+        "train_date_end": "2019-02-28 05:00:00",
+        "test_dates_start": "2019-03-01 05:00:00",
+        "test_dates_end": "2019-05-24 04:00:00",
+        "best_params": {
+            "lowess_fraction": 25,
+            "velocity_up": 0.05,
+            "velocity_down": -0.25,
+            "acceleration_up": 0.7000000000000001,
+            "acceleration_down": -0.25,
+            "take_profit": 0.3,
+            "stop_loss": 0.2
+        },
+        "best_value": 0.9467574895046977,
+        "test_value": 0.013516465672628044
+    },
+    "5": {
+        "train_date_start": "2019-02-25 05:00:00",
+        "train_date_end": "2019-07-02 04:00:00",
+        "test_dates_start": "2019-07-03 04:00:00",
+        "test_dates_end": "2019-09-26 04:00:00",
+        "best_params": {
+            "lowess_fraction": 55,
+            "velocity_up": 0.8,
+            "velocity_down": -0.8,
+            "acceleration_up": 0.9000000000000001,
+            "acceleration_down": -0.35,
+            "take_profit": 0.1,
+            "stop_loss": 0.2
+        },
+        "best_value": 0.2502627492924537,
+        "test_value": 0.05921732418442076
+    },
+    "6": {
+        "train_date_start": "2019-06-26 04:00:00",
+        "train_date_end": "2019-10-31 04:00:00",
+        "test_dates_start": "2019-11-01 04:00:00",
+        "test_dates_end": "2020-01-29 05:00:00",
+        "best_params": {
+            "lowess_fraction": 40,
+            "velocity_up": 0.15000000000000002,
+            "velocity_down": -0.85,
+            "acceleration_up": 0.6000000000000001,
+            "acceleration_down": -0.05,
+            "take_profit": 0.3,
+            "stop_loss": 0.3
+        },
+        "best_value": 0.8180761622134274,
+        "test_value": 0.060372334291937266
+    },
+    "7": {
+        "train_date_start": "2019-10-28 04:00:00",
+        "train_date_end": "2020-03-06 05:00:00",
+        "test_dates_start": "2020-03-09 04:00:00",
+        "test_dates_end": "2020-06-02 04:00:00",
+        "best_params": {
+            "lowess_fraction": 45,
+            "velocity_up": 0.1,
+            "velocity_down": -0.25,
+            "acceleration_up": 0.5,
+            "acceleration_down": -0.3999999999999999,
+            "take_profit": 0.2,
+            "stop_loss": 0.15000000000000002
+        },
+        "best_value": 1.2723909623115282,
+        "test_value": 0.6699493887841315
+    },
+    "8": {
+        "train_date_start": "2020-03-03 05:00:00",
+        "train_date_end": "2020-07-09 04:00:00",
+        "test_dates_start": "2020-07-10 04:00:00",
+        "test_dates_end": "2020-10-02 04:00:00",
+        "best_params": {
+            "lowess_fraction": 60,
+            "velocity_up": 0.2,
+            "velocity_down": -0.5,
+            "acceleration_up": 0.7500000000000001,
+            "acceleration_down": -0.1499999999999999,
+            "take_profit": 0.3,
+            "stop_loss": 0.3
+        },
+        "best_value": 2.691173265342269,
+        "test_value": 0.02324581846495853
+    },
+    "9": {
+        "train_date_start": "2020-07-02 04:00:00",
+        "train_date_end": "2020-11-06 05:00:00",
+        "test_dates_start": "2020-11-09 05:00:00",
+        "test_dates_end": "2021-02-04 05:00:00",
+        "best_params": {
+            "lowess_fraction": 40,
+            "velocity_up": 0.1,
+            "velocity_down": -0.5,
+            "acceleration_up": 0.9000000000000001,
+            "acceleration_down": -0.1499999999999999,
+            "take_profit": 0.15000000000000002,
+            "stop_loss": 0.1
+        },
+        "best_value": 0.7400042670538152,
+        "test_value": 0.07010102196514026
+    },
+    "10": {
+        "train_date_start": "2020-11-03 05:00:00",
+        "train_date_end": "2021-03-15 04:00:00",
+        "test_dates_start": "2021-03-16 04:00:00",
+        "test_dates_end": "2021-06-09 04:00:00",
+        "best_params": {
+            "lowess_fraction": 60,
+            "velocity_up": 0.1,
+            "velocity_down": -0.6499999999999999,
+            "acceleration_up": 0.8500000000000001,
+            "acceleration_down": -0.19999999999999996,
+            "take_profit": 0.3,
+            "stop_loss": 0.1
+        },
+        "best_value": 1.626840871359335,
+        "test_value": 0.1407019182230769
+    },
+    "11": {
+        "train_date_start": "2021-03-10 05:00:00",
+        "train_date_end": "2021-07-16 04:00:00",
+        "test_dates_start": "2021-07-19 04:00:00",
+        "test_dates_end": "2021-10-11 04:00:00",
+        "best_params": {
+            "lowess_fraction": 55,
+            "velocity_up": 0.05,
+            "velocity_down": -0.6,
+            "acceleration_up": 0.35000000000000003,
+            "acceleration_down": -0.05,
+            "take_profit": 0.25,
+            "stop_loss": 0.15000000000000002
+        },
+        "best_value": 0.57554990422617,
+        "test_value": 0.16715733987124515
+    },
+    "12": {
+        "train_date_start": "2021-07-13 04:00:00",
+        "train_date_end": "2021-11-16 05:00:00",
+        "test_dates_start": "2021-11-17 05:00:00",
+        "test_dates_end": "2022-02-11 05:00:00",
+        "best_params": {
+            "lowess_fraction": 20,
+            "velocity_up": 0.2,
+            "velocity_down": -0.19999999999999996,
+            "acceleration_up": 0.7000000000000001,
+            "acceleration_down": -0.55,
+            "take_profit": 0.3,
+            "stop_loss": 0.05
+        },
+        "best_value": 0.5945000142110538,
+        "test_value": 0.1720559658238642
+    },
+    "13": {
+        "train_date_start": "2021-11-10 05:00:00",
+        "train_date_end": "2022-03-21 04:00:00",
+        "test_dates_start": "2022-03-22 04:00:00",
+        "test_dates_end": "2022-06-15 04:00:00",
+        "best_params": {
+            "lowess_fraction": 50,
+            "velocity_up": 0.45,
+            "velocity_down": -0.5,
+            "acceleration_up": 0.9500000000000001,
+            "acceleration_down": -0.25,
+            "take_profit": 0.3,
+            "stop_loss": 0.15000000000000002
+        },
+        "best_value": 1.1625775486463112,
+        "test_value": 0.06412810065531865
+    },
+    "14": {
+        "train_date_start": "2022-03-16 04:00:00",
+        "train_date_end": "2022-07-25 04:00:00",
+        "test_dates_start": "2022-07-26 04:00:00",
+        "test_dates_end": "2022-10-18 04:00:00",
+        "best_params": {
+            "lowess_fraction": 50,
+            "velocity_up": 0.05,
+            "velocity_down": -0.19999999999999996,
+            "acceleration_up": 0.7500000000000001,
+            "acceleration_down": -0.09999999999999998,
+            "take_profit": 0.1,
+            "stop_loss": 0.1
+        },
+        "best_value": 1.2069648020474002,
+        "test_value": 0.0
+    },
+    "final_best_params": {
+        "lowess_fraction": 25,
+        "velocity_up": 0.05,
+        "velocity_down": -0.25,
+        "acceleration_up": 0.7000000000000001,
+        "acceleration_down": -0.25,
+        "take_profit": 0.3,
+        "stop_loss": 0.2
+    },
+    "final_return": 0.3062165447590326
+}

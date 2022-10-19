@@ -121,4 +121,4 @@ class ExtractData:
 
 if __name__ == '__main__':
     ed = ExtractData()
-    ed.extract_data(['TSLA', 'GOOGL', 'SOLUSDT', 'BTCUSDT', 'ETHUSDT'], '5m', overwrite=False)
+    ed.extract_data(['TSLA'], '1d', overwrite=True)

@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(f'{os.getcwd()}/src')
 import utils
 import config
 import vectorbt as vbt
@@ -83,19 +85,17 @@ class StrategyDerivatives:
 
 
     def _calculate_indicators(self, data, lowess_fraction, velocity_up, velocity_down, acceleration_up, acceleration_down):
-        if self._method == 'derivative':
-            first_derivative, second_derivative = self._calculate_derivative_indicator()
-            signals = self._get_derivative_signals(first_derivative, second_derivative)
-
+        first_derivative, second_derivative = self._calculate_derivative_indicator()
+        signals = self._get_derivative_signals(first_derivative, second_derivative)
         return signals
 
     def apply_strategy(self):
         indicator = vbt.IndicatorFactory(
-        class_name='first_and_second_order_derivatives',
-        short_name='derivatives',
-        input_names=['close'],
-        param_names=['lowess_fraction', 'velocity_up', 'velocity_down', 'acceleration_up', 'acceleration_down'],
-        output_names=['signals']
+            class_name='first_and_second_order_derivatives',
+            short_name='derivatives',
+            input_names=['close'],
+            param_names=['lowess_fraction', 'velocity_up', 'velocity_down', 'acceleration_up', 'acceleration_down'],
+            output_names=['signals']
         ).from_apply_func(
             self._calculate_indicators,
             keep_pd=True
@@ -110,7 +110,6 @@ class StrategyDerivatives:
         
         entries = res.signals == 1.0
         exits = res.signals == -1.0
-
         pf = vbt.Portfolio.from_signals(
             self._data,
             entries,
@@ -119,6 +118,7 @@ class StrategyDerivatives:
             tp_stop=self._take_profit,
             sl_stop=self._stop_loss
         )
+
 
         return pf
 

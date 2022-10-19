@@ -22,13 +22,18 @@
     5. Implement incremental extraction [ - ]
 
 
+- Create trend classifier.
+- Create clusters of similar behaviour assets.
 - Read about Alpaca paper trading.
+- Check how to calculate Sharpe Ratio with VectorBT.
+
 ### In progress:
-- Check how to calculate Sharpe Ratio with VectorBT
+- Create fold tab in dashboard to be able to make a fold comparison.
 
 ### Done:
 - Crear una función para extraer datos a nivel de 5 minutos utilizando la API de interactive brokers con un buen historico (alrededor de 6 años estaría bien) [ &#10004; ]
 - Una vez creada la función extraer datos de diferentes activos y guardarlos en una carpeta en formato csv. (top empresas s&p500, oro y plata, bitcoin y ethereum, divisas como USD-EUR. [  &#10004; ]
+- Create simple dashboard to understand optimization easier. [ &#10004; ]
 
 ### Blocked
 

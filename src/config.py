@@ -7,8 +7,8 @@ import os
 FOLDS = {
     'NUM_FOLDS': 10,
     'FOLD_TYPE': 'walk-forward',
-    'FOLD_SIZE_IN_DAYS': 120,
-    'FOLD_TEST_SIZE_IN_DAYS': 30,
+    'FOLD_SIZE_IN_DAYS': 150,
+    'FOLD_TEST_SIZE_IN_DAYS': 60,
 }
 
 #######################################################################################################################################################
@@ -45,7 +45,7 @@ CREDENTIALS = {
 ASSET_TYPE = ['crypto', 'stocks']
 
 TICKERS = {
-    'STOCKS': ["TSLA", "AAPL", "SPOT", "NIO", "BABA", "SPY", "GOOGL", "NVIDIA"],
+    'STOCKS': ["TSLA", "AAPL", "SPOT", "NIO", "BABA", "SPY", "GOOGL", "NVDA", "KO", "WEN", "MMM"],
     'CRYPTO': ["BTCUSDT", "ETHUSDT", "ADAUSDT", "SOLUSDT"]
 }
 
@@ -65,3 +65,10 @@ ACCEPTED_INTERVALS = {
 }
     
 MODE = ['save', 'retrieve']
+
+
+#######################################################################################################################################################
+#              DASHBOARD PARAMETERS
+#######################################################################################################################################################
+
+STRATEGY_LIST = ['Derivatives', 'Random']

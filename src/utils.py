@@ -15,7 +15,6 @@ def train_test_split(data: pd.DataFrame, test_months: int) -> Tuple[pd.DataFrame
 def get_best_trial_parameters() -> dict:   # Dict[str, int, float, float, float, float]: --> Bug don't letting type for dict. TODO: Search a workaround
     df_optimization_trials = pd.read_csv(config.OPTIMIZATION['PATH_OPTIMIZATION_RESULTS'])
 
-    # TODO: Use dicts 
     best_trial = df_optimization_trials.iloc[0,:]
     parameters_dict = {
         'interval': best_trial.params_interval,
@@ -36,7 +35,6 @@ def prepare_asset_dataframe_format(tickers: List[str]) -> pd.DataFrame:
     ticker_price.index = timestamp
     ticker_price = ticker_price[tickers]
     ticker_price[ticker_price.index >= config.OPTIMIZATION['START_DATE']]
-
     return ticker_price
 
 
