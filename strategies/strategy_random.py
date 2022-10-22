@@ -1,5 +1,4 @@
 import os
-import signal
 import sys
 sys.path.append(f'{os.getcwd()}/src')
 import numpy as np
